@@ -1,1 +1,16 @@
-<p>patient-form works!</p>
+<div class="container">
+    <h2>Patientenanamnese</h2>
+    <form (ngSubmit)="generateQuestions(patientText.value)">
+      <div class="form-group">
+        <label for="patientText">Patiententext:</label>
+        <textarea
+          class="form-control"
+          id="patientText"
+          #patientText
+          rows="5"
+        ></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Fragen generieren</button>
+    </form>
+  </div>
+  
