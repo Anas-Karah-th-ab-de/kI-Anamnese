@@ -32,6 +32,16 @@
             "scripts": []
           },
           "configurations": {
+            "de": {
+              "localize": ["de"],
+              "aot": true
+            },
+            "en": {
+              "localize": ["en"],
+              "aot": true
+            },
+          
+          
             "production": {
               "budgets": [
                 {

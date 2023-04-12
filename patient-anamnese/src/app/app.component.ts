@@ -14,24 +14,34 @@ registerLocaleData(localeDe, 'de');
 export class AppComponent {
   title = 'My Angular App';
   patientName = '';
-  patientAge: number | null = null; // Stellen Sie sicher, dass diese Zeile hinzugefügt wurde
+  patientAge: number | null = null;
   patientText = '';
   questions: string[] = [];
   currentQuestionIndex = 0;
-  answers: string[] = []; // Stellen Sie sicher, dass diese Zeile hinzugefügt wurde
-  
+  answers: string[] = [];
+  selectedLanguage = 'en';
 
   constructor(private apiService: ApiService) { }
 
-  generateQuestions(patientText: string): void {
-    this.apiService.generateQuestions(patientText).subscribe(response => {
+  generateQuestions(patientText: string, patientAge: number | null, language: string) {
+    this.apiService.generateQuestions(patientText, patientAge, language).subscribe(response => {
       console.log(response);
       this.questions = response.questions.split('\n');
       this.currentQuestionIndex = 0;
       this.answers = new Array(this.questions.length).fill('');
     });
   }
+  
 
+  
+  changeLanguage() {
+    if (this.selectedLanguage === 'de') {
+      document.documentElement.lang = 'de';
+    } else {
+      document.documentElement.lang = 'en';
+    }
+  }
+  
   nextQuestion(): void {
     if (this.currentQuestionIndex < this.questions.length - 1) {
       this.currentQuestionIndex++;
@@ -43,6 +53,7 @@ export class AppComponent {
       this.currentQuestionIndex--;
     }
   }
+  
   allQuestionsAnswered(): boolean {
     return this.answers.every(answer => answer !== undefined && answer !== '');
   }
@@ -57,5 +68,4 @@ export class AppComponent {
     console.log('Sending patient data to doctor:', patientData);
     // Hier können Sie den Code zum Senden der Patientendaten an die Arztanwendung hinzufügen
   }
-  
 }

@@ -11,8 +11,10 @@ export class ApiService {
 
   constructor(private http: HttpClient) { }
 
-  generateQuestions(patientText: string): Observable<any> {
-    const requestBody = { patient_text: patientText };
-    return this.http.post<any>(`${this.apiUrl}/generate_questions`, requestBody);
+  generateQuestions(patientText: string, patientAge: number | null, language: string) {
+    const url = `${this.apiUrl}/generate_questions`;
+    const body = { patient_text: patientText, patient_age: patientAge, language: language };
+    return this.http.post<any>(url, body);
   }
+  
 }
