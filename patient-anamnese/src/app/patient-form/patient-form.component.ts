@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
+import { HttpHeaders } from '@angular/common/http';
+
 
 @Component({
   selector: 'app-patient-form',
@@ -13,15 +15,18 @@ export class PatientFormComponent {
     console.log("generateQuestions called with:", patientText);
     const apiUrl = 'http://localhost:5000/generate_questions';
     const httpOptions = {
-      headers: new HttpHeaders({
-          'Content-Type':  'application/json'
-      })
+      headers: {
+        'Content-Type':  'application/json'
+      }
     };
-      
-    this.http.post(apiUrl, {
-      patient_text: patientText
-    }, httpOptions).subscribe(response => {
-      console.log("Generated questions:", response);
+    
+    const payload = { patient_text: patientText };
+    console.log("Sending payload:", payload);
+  
+    this.http.post<{questions: string}>(apiUrl, payload, httpOptions).subscribe(response => {
+      console.log("Generated questions:", response.questions);
     });
-  }  
+  }
+  
+  
 }
