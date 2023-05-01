@@ -1,0 +1,49 @@
+/* Style for the container */
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  /* Style for the table */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  /* Style for the table header */
+  thead {
+    background-color: #0074D9;
+    color: #FFF;
+  }
+  
+  /* Style for the table header cells */
+  th {
+    padding: 10px;
+    text-align: left;
+  }
+  
+  /* Style for the table body cells */
+  td {
+    padding: 10px;
+    border: 1px solid #ddd;
+  }
+  
+  /* Style for the patient name cell */
+  td:first-child {
+    font-weight: bold;
+  }
+  
+  /* Style for the ul list */
+  ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Style for the li items */
+  li {
+    margin-bottom: 5px;
+  }
+  

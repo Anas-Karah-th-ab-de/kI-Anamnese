@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
+import { BehaviorSubject } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
 
   private apiUrl = 'http://localhost:5000';
-
+  patientsDataUpdated = new BehaviorSubject<boolean>(false);
   constructor(private http: HttpClient) { }
 
   generateQuestions(patientText: string, patientAge: number | null, language: string) {
@@ -23,8 +23,14 @@ export class ApiService {
   }
 
   // Fügen Sie die getPatientsData()-Methode hinzu
-  getPatientsData(): Observable<any> {
-    const url = `${this.apiUrl}/get_patients_data`;
-    return this.http.get<any>(url);
+  getPatientsData() {
+    return this.http.get(`${this.apiUrl}/get_patients_data`);
   }
+  // Fügen Sie diese Funktion in Ihrer ApiService Klasse hinzu
+  generateFollowUpQuestions(prevQuestion: string, patientAnswer: string): Observable<any> {
+    const url = `${this.apiUrl}/generate_follow_up_questions`;
+    const body = { prev_question: prevQuestion, patient_answer: patientAnswer };
+    return this.http.post<any>(url, body);
+  }
+
 }

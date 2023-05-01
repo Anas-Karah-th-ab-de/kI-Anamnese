@@ -13,6 +13,12 @@ export class DoctorComponent implements OnInit {
 
   ngOnInit(): void {
     this.getPatientsData();
+    this.apiService.patientsDataUpdated.subscribe((updated) => {
+      if (updated) {
+        this.getPatientsData();
+        this.apiService.patientsDataUpdated.next(false);
+      }
+    });
   }
 
   getPatientsData(): void {
@@ -25,4 +31,6 @@ export class DoctorComponent implements OnInit {
       }
     );
   }
+
+
 }
