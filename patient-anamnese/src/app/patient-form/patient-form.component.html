@@ -17,12 +17,23 @@
   <label for="patient-age">Alter des Patienten:</label>
   <input id="patient-age" type="number" [(ngModel)]="patientAge" placeholder="Enter patient age">
 </div>
+<div class="form-group">
+  <div class="form-group">
+    <label for="patient-gender">Biologisches Geschlecht des Patienten:</label>
+    <select id="patient-gender" [(ngModel)]="patientGender">
+      <option value="male">Männlich</option>
+      <option value="female">Weiblich</option>
+      <option value="other">Anderes</option>
+    </select>
+  </div>
+  
+
 <div>
   <label for="patient-text">Patientenbeschwerden: </label>
   <input id="patient-text" [(ngModel)]="patientText" placeholder="Enter patient text">
 </div>
 
-<button (click)="generateQuestions(patientText, patientAge, selectedLanguage)">Generate Questions</button>
+<button (click)="generateQuestions(patientText, patientAge, selectedLanguage, patientGender)">Generate Questions</button>
 
 
 
@@ -36,4 +47,8 @@
   <button id="next-question" (click)="nextQuestion()" *ngIf="currentQuestionIndex < questions.length - 1">Nächste Frage</button>
   <button *ngIf="allQuestionsAnswered()" (click)="sendToDoctor()">Send to Doctor</button>
 </div>
+<button id="previous-question" (click)="previousQuestion()" *ngIf="currentQuestionIndex > 0">Vorherige Frage</button>
+<button id="restart" (click)="restart()">Neu starten</button>
+<button *ngIf="sendToDoctorVisible" (click)="sendToDoctor()">Send to Doctor</button>
+
 </div>

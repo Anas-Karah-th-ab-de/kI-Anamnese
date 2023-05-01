@@ -8,6 +8,8 @@ import { ApiService } from '../api.service';
 })
 export class DoctorComponent implements OnInit {
   patientsData: any[] = [];
+  selectedPatient: any;
+  selectedActionText: string = '';
 
   constructor(private apiService: ApiService) { }
 
@@ -20,7 +22,13 @@ export class DoctorComponent implements OnInit {
       }
     });
   }
-
+  selectedLanguage = 'en';
+  languages = [
+    { code: 'en', name: 'English' },
+    { code: 'de', name: 'Deutsch' },
+    // Fügen Sie weitere Sprachen hinzu
+  ];
+  
   getPatientsData(): void {
     this.apiService.getPatientsData().subscribe(
       (response: any) => {
@@ -31,6 +39,92 @@ export class DoctorComponent implements OnInit {
       }
     );
   }
-
+  showDetails(patient: any): void {
+    this.selectedPatient = patient;
+    this.selectedActionText = '';
+  }
+  // In der doctor.component.ts
+  translate(patient: any): void {
+    this.apiService.translateText(patient.patient_text, this.selectedLanguage).subscribe(
+      (response: any) => {
+        patient.patient_text = response.translated_text;
+  
+        // Übersetzen der Fragen
+        const questionsToTranslate = patient.questions.join('|||');
+        this.apiService.translateText(questionsToTranslate, this.selectedLanguage).subscribe(
+          (questionsResponse: any) => {
+            patient.questions = questionsResponse.translated_text.split('|||');
+          },
+          (error) => {
+            console.error('Error translating questions:', error);
+          }
+        );
+  
+        // Übersetzen der Antworten
+        const answersToTranslate = patient.answers.join('|||');
+        this.apiService.translateText(answersToTranslate, this.selectedLanguage).subscribe(
+          (answersResponse: any) => {
+            patient.answers = answersResponse.translated_text.split('|||');
+          },
+          (error) => {
+            console.error('Error translating answers:', error);
+          }
+        );
+  
+        // Übersetzen des Aktionstextes
+        const actionTextToTranslate = this.selectedActionText;
+        this.apiService.translateText(actionTextToTranslate, this.selectedLanguage).subscribe(
+          (actionTextResponse: any) => {
+            this.selectedActionText = actionTextResponse.translated_text;
+          },
+          (error) => {
+            console.error('Error translating action text:', error);
+          }
+        );
+      },
+      (error) => {
+        console.error('Error translating text:', error);
+      }
+    );
+  }
+  
+  
+  summarize(patient: any): void {
+    this.apiService.summarizeText(patient.patient_text).subscribe(
+      (response: any) => {
+        patient.summary = response.summary; // Speichern der Zusammenfassung im Patientenobjekt
+      },
+      (error) => {
+        console.error('Error summarizing text:', error);
+      }
+    );
+  }
+  
+  
+  suggestDiagnosis(patient: any): void {
+    this.apiService.suggestDiagnosis(patient).subscribe(
+      (response: any) => {
+        patient.diagnosis = response.diagnosis; // Speichern der vorgeschlagenen Diagnose im Patientenobjekt
+      },
+      (error) => {
+        console.error('Error suggesting diagnosis:', error);
+      }
+    );
+  }
+  
+  
+  medication(patient: any): void {
+    this.apiService.suggestMedication(patient).subscribe(
+      (response: any) => {
+        patient.medication = response.medication; // Speichern der vorgeschlagenen Medikation im Patientenobjekt
+      },
+      (error) => {
+        console.error('Error suggesting medication:', error);
+      }
+    );
+  }
+  
+  
+  
 
 }

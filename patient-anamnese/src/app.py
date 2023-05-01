@@ -11,9 +11,9 @@ openai.api_key = "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"
 global submitted_data
 submitted_data = []
 
-def generate_questions(patient_text, patient_age):
-    prompt = f"Based on the patient's complaint: \"{patient_text}\" and age {patient_age}, generate specific follow-up questions:"
-
+def generate_questions(patient_text, patient_age, patient_gender):
+    prompt = f"Based on the patient's complaint: \"{patient_text}\", age {patient_age}, and biological gender {patient_gender}, generate specific follow-up questions:"
+    
     response = openai.Completion.create(
         engine="text-davinci-002",
         prompt=prompt,
@@ -50,8 +50,9 @@ def generate_questions_route():
         patient_text = data["patient_text"]
         patient_age = data["patient_age"]
 
-        questions = generate_questions(patient_text, patient_age)
-
+        patient_gender = data["patient_gender"]
+        questions = generate_questions(patient_text, patient_age, patient_gender)
+    # ...
         # Erkennen der Sprache von Patientenbeschwerden
         translator = Translator()
         detected_language = translator.detect(patient_text).lang
@@ -118,6 +119,74 @@ def get_patients_data():
 @app.route("/", methods=["GET"])
 def home():
     return "Flask backend is running!"
+@app.route("/translate_text", methods=["POST"])
+def translate_text_route():
+    content_type = request.headers.get("Content-Type")
+    print("Request Content-Type:", content_type)
+    try:
+        data = request.get_json()
+        text = data["text"]
+        target_language = data["target_language"]
+
+        translator = Translator()
+        translated_text = translator.translate(text, dest=target_language).text
+
+        return jsonify({"translated_text": translated_text})
+    except Exception as e:
+        print("Error while processing request:", e)
+        return jsonify({"error": str(e)}), 400
+def generate_gpt3_response(prompt: str) -> str:
+    response = openai.Completion.create(
+        engine="text-davinci-002",
+        prompt=prompt,
+        max_tokens=50,
+        n=1,
+        stop=None,
+        temperature=0.5,
+    )
+    return response.choices[0].text.strip()
+
+@app.route("/summarize_text", methods=["POST"])
+def summarize_text_route():
+    try:
+        data = request.get_json()
+        text = data["text"]
+
+        prompt = f"Please summarize the following text:\n\n{text}\n\nSummary:"
+        summary = generate_gpt3_response(prompt)
+
+        return jsonify({"summary": summary})
+    except Exception as e:
+        print("Error while processing request:", e)
+        return jsonify({"error": str(e)}), 400
+
+@app.route("/suggest_diagnosis", methods=["POST"])
+def suggest_diagnosis_route():
+    try:
+        data = request.get_json()
+        patient = data["patient"]
+
+        prompt = f"Based on the patient's information:\n\n{patient}\n\nSuggest a possible diagnosis:"
+        diagnosis = generate_gpt3_response(prompt)
+
+        return jsonify({"diagnosis": diagnosis})
+    except Exception as e:
+        print("Error while processing request:", e)
+        return jsonify({"error": str(e)}), 400
+
+@app.route("/suggest_medication", methods=["POST"])
+def suggest_medication_route():
+    try:
+        data = request.get_json()
+        patient = data["patient"]
+
+        prompt = f"Based on the patient's information:\n\n{patient}\n\nSuggest appropriate medication:"
+        medication = generate_gpt3_response(prompt)
+
+        return jsonify({"medication": medication})
+    except Exception as e:
+        print("Error while processing request:", e)
+        return jsonify({"error": str(e)}), 400
 
 if __name__ == "__main__":
     app.run(debug=True)

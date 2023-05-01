@@ -1,32 +1,74 @@
-
 <div class="container">
-    <h1>Doctor's Dashboard</h1>
-    <table>
-      <thead>
-        <tr>
-          <th>Patient Name</th>
-          <th>Age</th>
-          <th>Complaint</th>
-          <th>Questions</th>
-          <th>Answers</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let patient of patientsData">
-          <td>{{ patient.patient_name }}</td>
-          <td>{{ patient.patient_age }}</td>
-          <td>{{ patient.patient_text }}</td>
-          <td>
-            <ul>
-              <li *ngFor="let question of patient.questions">{{ question }}</li>
-            </ul>
-          </td>
-          <td>
-            <ul>
-              <li *ngFor="let answer of patient.answers">{{ answer }}</li>
-            </ul>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+  <h1>Doctor's Dashboard</h1>
+  <div class="language-selection">
+    <select [(ngModel)]="selectedLanguage">
+      <option *ngFor="let lang of languages" [ngValue]="lang.code">{{ lang.name }}</option>
+    </select>
   </div>
+  <div class="row">
+    <div class="col-md-12">
+      <h2>Patientenliste</h2>
+    </div>
+  </div>
+  <div *ngFor="let patient of patientsData" class="card mt-4">
+    <div class="card-body">
+      <div class="d-flex justify-content-between">
+        <h5 class="card-title">{{ patient.name }}</h5>
+        <p class="card-text">Alter: {{ patient.age }}</p>
+        <p class="card-text">Beschwerden: {{ patient.patient_text }}</p>
+      </div>
+      <button (click)="showDetails(patient)" class="btn btn-primary">Details anzeigen</button>
+      <div *ngIf="selectedPatient === patient" class="mt-3">
+        <h2>Patientendetails</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Alter</th>
+              <th>Beschwerden</th>
+              <th>Fragen</th>
+              <th>Antworten</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{ patient.name }}</td>
+              <td>{{ patient.age }}</td>
+              <td>{{ patient.patient_text }}</td>
+              <td>
+                <ul>
+                  <li *ngFor="let question of patient.questions">{{ question }}</li>
+                </ul>
+              </td>
+              <td>
+                <ul>
+                  <li *ngFor="let answer of patient.answers">{{ answer }}</li>
+                </ul>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h3>Aktionen</h3>
+        <button (click)="translate(patient)" class="btn btn-primary">Übersetzung</button>
+        <button (click)="summarize(patient)" class="btn btn-secondary">Zusammenfassung</button>
+        <button (click)="suggestDiagnosis(patient)" class="btn btn-primary">Vorgeschlagene Diagnose</button>
+        <button (click)="medication(patient)" class="btn btn-secondary">Medikation</button>
+        <div class="mt-3" *ngIf="selectedActionText">
+          <p>{{ selectedActionText }}</p>
+        </div>
+        <!-- Änderungen hier -->
+<div *ngIf="patient.summary" class="mt-3">
+  <p><strong>Zusammenfassung:</strong> {{ patient.summary }}</p>
+</div>
+<div *ngIf="patient.diagnosis" class="mt-3">
+  <p><strong>Vorgeschlagene Diagnose:</strong> {{ patient.diagnosis }}</p>
+</div>
+<div *ngIf="patient.medication" class="mt-3">
+  <p><strong>Medikation:</strong> {{ patient.medication }}</p>
+</div>
+<!-- Ende der Änderungen -->
+
+      </div>
+    </div>
+  </div>
+</div>

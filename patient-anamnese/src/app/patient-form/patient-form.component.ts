@@ -19,9 +19,12 @@ export class PatientFormComponent {
   currentQuestionIndex = 0;
   answers: string[] = [];
   selectedLanguage = 'en';
-  
+  maxQuestions = 5;
+  patientGender = 'male';
   constructor(private apiService: ApiService) {}
-  
+  sendToDoctorVisible(): boolean {
+    return this.answers.length >= 5 && this.allQuestionsAnswered();
+  }
   changeLanguage() {
     if (this.selectedLanguage === 'de') {
       document.documentElement.lang = 'de';
@@ -62,29 +65,48 @@ export class PatientFormComponent {
   }
   
   
-  generateQuestions(patientText: string, patientAge: number | null, selectedLanguage: string): void {
-    this.apiService.generateQuestions(patientText, patientAge, selectedLanguage).subscribe(
+  
+  generateQuestions(patientText: string, patientAge: number | null, selectedLanguage: string, patientGender: string): void {
+    this.apiService.generateQuestions(patientText, patientAge, selectedLanguage, patientGender).subscribe(
       (response: any) => {
         this.questions = response.questions;
+        this.answers = new Array(this.questions.length).fill('');
       },
       (error: any) => {
         console.log(error);
       }
     );
   }
-  // Fügen Sie diese Funktion in Ihrer PatientFormComponent Klasse hinzu
+  
   nextQuestion(): void {
-   const currentAnswer = this.answers[this.currentQuestionIndex];
-   this.apiService.generateFollowUpQuestions(this.questions[this.currentQuestionIndex], currentAnswer).subscribe(
-    (response: any) => {
-      this.currentQuestionIndex++;
-      this.questions.push(response.follow_up_question);
-      this.answers.push('');
-    },
-    (error: any) => {
-      console.log(error);
+    if (this.currentQuestionIndex >= this.maxQuestions - 1) {
+      return;
     }
-  );
-}
-
-}
+  
+    const currentAnswer = this.answers[this.currentQuestionIndex];
+  
+    if (this.currentQuestionIndex === this.maxQuestions - 2) {
+      this.currentQuestionIndex++;
+      this.questions.push("Möchten Sie dem Arzt weitere Mitteilungen geben?");
+      this.answers.push('');
+    } else {
+      this.apiService.generateFollowUpQuestions(this.questions[this.currentQuestionIndex], currentAnswer).subscribe(
+        (response: any) => {
+          this.currentQuestionIndex++;
+          this.questions.push(response.follow_up_question);
+          this.answers.push('');
+        },
+        (error: any) => {
+          console.log(error);
+        }
+      );
+    }
+  }
+  restart(): void {
+    this.currentQuestionIndex = 0;
+    this.questions = [];
+    this.answers = [];
+  }
+  
+  
+}  
