@@ -7,7 +7,8 @@ app.config['DEBUG'] = True
 CORS(app, resources={r"/*": {"origins": "*"}})  # Erlaubt CORS für alle Routen und alle Domains
 
 openai.api_key = "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"
-
+global submitted_data
+submitted_data = []
 def generate_questions(patient_text, patient_age):
     prompt = f"Based on the patient's complaint: \"{patient_text}\" and age {patient_age}, generate specific follow-up questions:"
 
@@ -21,7 +22,8 @@ def generate_questions(patient_text, patient_age):
     )
 
     question_text = response.choices[0].text.strip()
-    return question_text
+    questions = question_text.split("\n")  # Split the text into an array of questions
+    return questions
 
 
 @app.route("/generate_questions", methods=["POST"])
@@ -37,6 +39,22 @@ def generate_questions_route():
     except Exception as e:
         print("Error while processing request:", e)
         return jsonify({"error": str(e)}), 400
+
+@app.route("/submit_to_doctor", methods=["POST"])
+def submit_to_doctor():
+    data = request.get_json()
+    submitted_data.append(data)
+    patient_name = data.get("patient_name", "Unknown")
+    patient_age = data.get("patient_age", "Unknown")
+    patient_text = data["patient_text"]
+    questions = data["questions"]
+    answers = data["answers"]
+    return jsonify({"message": "Data submitted successfully", "patient_name": patient_name, "patient_age": patient_age, "patient_text": patient_text, "questions": questions, "answers": answers})
+
+@app.route("/get_patients_data", methods=["GET"])
+def get_patients_data():
+    return jsonify({"patients_data": submitted_data})
+
 
 
 @app.route("/", methods=["GET"])

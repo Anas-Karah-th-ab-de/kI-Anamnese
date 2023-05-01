@@ -1,0 +1,32 @@
+
+<div class="container">
+    <h1>Doctor's Dashboard</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Patient Name</th>
+          <th>Age</th>
+          <th>Complaint</th>
+          <th>Questions</th>
+          <th>Answers</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let patient of patientsData">
+          <td>{{ patient.patient_name }}</td>
+          <td>{{ patient.patient_age }}</td>
+          <td>{{ patient.patient_text }}</td>
+          <td>
+            <ul>
+              <li *ngFor="let question of patient.questions">{{ question }}</li>
+            </ul>
+          </td>
+          <td>
+            <ul>
+              <li *ngFor="let answer of patient.answers">{{ answer }}</li>
+            </ul>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>

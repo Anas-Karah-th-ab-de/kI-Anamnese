@@ -10,6 +10,8 @@
     "src/main.ts",
     "src/app/app.module.ts",
     "src/app/patient-form/patient-form.component.ts",
+    "src/app/doctor/doctor.component.ts",
+
     // Add other files here
   ],
   "include": [

@@ -1,19 +1,40 @@
+
 <div class="container">
-  <div class="row justify-content-center">
-    <div class="col-12 col-md-8">
-      <h2>Patientenanamnese</h2>
-      <form (ngSubmit)="generateQuestions(patientText.value)">
-        <div class="form-group">
-          <label for="patientText">Patiententext:</label>
-          <textarea
-            class="form-control"
-            id="patientText"
-            #patientText
-            rows="5"
-          ></textarea>
-        </div>
-        <button type="submit" class="btn btn-primary">Fragen generieren</button>
-      </form>
+  <div class="language-selector">
+      <label for="language">Sprache:</label>
+      <select id="language" [(ngModel)]="selectedLanguage" (change)="changeLanguage()">
+        <option value="en">Englisch</option>
+        <option value="de">Deutsch</option>
+      </select>
+    </div>
+<h1 i18n>Anamnese-Fragen</h1>
+
+<div class="form-group">
+  <label for="patient-name">Patientenname:</label>
+  <input id="patient-name" type="text" [(ngModel)]="patientName" placeholder="Enter patient name">
+</div>
+<div class="form-group">
+  <label for="patient-age">Alter des Patienten:</label>
+  <input id="patient-age" type="number" [(ngModel)]="patientAge" placeholder="Enter patient age">
+</div>
+<div>
+  <label for="patient-text">Patientenbeschwerden: </label>
+  <input id="patient-text" [(ngModel)]="patientText" placeholder="Enter patient text">
+</div>
+
+<button (click)="generateQuestions(patientText, patientAge, selectedLanguage)">Generate Questions</button>
+
+
+
+<div *ngIf="questions.length > 0" class="questions-container">
+  <h2 i18n>Fragen:</h2>
+  <div *ngFor="let question of questions; index as i">
+    <p>{{i + 1}}. {{question}}</p>
+    <div class="form-group">
+      <label for="answer">Antwort:</label>
+      <input id="answer" [(ngModel)]="answers[i]" placeholder="Enter your answer">
     </div>
   </div>
+  <button *ngIf="allQuestionsAnswered()" (click)="sendToDoctor()">Send to Doctor</button>
+</div>
 </div>
