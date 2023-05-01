@@ -26,6 +26,8 @@ export class DoctorComponent implements OnInit {
   languages = [
     { code: 'en', name: 'English' },
     { code: 'de', name: 'Deutsch' },
+    { code: 'ar', name: 'Arabic' },
+    { code: 'tr', name: 'Türky' },
     // Fügen Sie weitere Sprachen hinzu
   ];
   
