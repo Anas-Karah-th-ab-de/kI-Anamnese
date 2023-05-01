@@ -21,7 +21,7 @@ export class PatientFormComponent {
   selectedLanguage = 'en';
   
   constructor(private apiService: ApiService) {}
-
+  
   changeLanguage() {
     if (this.selectedLanguage === 'de') {
       document.documentElement.lang = 'de';
@@ -30,11 +30,7 @@ export class PatientFormComponent {
     }
   }
 
-  nextQuestion(): void {
-    if (this.currentQuestionIndex < this.questions.length - 1) {
-      this.currentQuestionIndex++;
-    }
-  }
+
 
   previousQuestion(): void {
     if (this.currentQuestionIndex > 0) {
@@ -76,4 +72,19 @@ export class PatientFormComponent {
       }
     );
   }
+  // Fügen Sie diese Funktion in Ihrer PatientFormComponent Klasse hinzu
+  nextQuestion(): void {
+   const currentAnswer = this.answers[this.currentQuestionIndex];
+   this.apiService.generateFollowUpQuestions(this.questions[this.currentQuestionIndex], currentAnswer).subscribe(
+    (response: any) => {
+      this.currentQuestionIndex++;
+      this.questions.push(response.follow_up_question);
+      this.answers.push('');
+    },
+    (error: any) => {
+      console.log(error);
+    }
+  );
+}
+
 }
