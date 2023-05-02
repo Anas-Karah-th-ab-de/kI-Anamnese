@@ -19,11 +19,11 @@ export class PatientFormComponent {
   currentQuestionIndex = 0;
   answers: string[] = [];
   selectedLanguage = 'en';
-  maxQuestions = 5;
+  maxQuestions = 8;
   patientGender = 'male';
   constructor(private apiService: ApiService) {}
   sendToDoctorVisible(): boolean {
-    return this.answers.length >= 5 && this.allQuestionsAnswered();
+    return this.answers.length >= 8 && this.allQuestionsAnswered();
   }
   changeLanguage() {
     if (this.selectedLanguage === 'de') {
@@ -49,6 +49,7 @@ export class PatientFormComponent {
     const patientData = {
       name: this.patientName,
       age: this.patientAge,
+      gender: this.patientGender,
       patient_text: this.patientText, // Add this line to include "patient_text"
       questions: this.questions,
       answers: this.answers

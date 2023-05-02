@@ -83,6 +83,41 @@ export class DoctorComponent implements OnInit {
             console.error('Error translating action text:', error);
           }
         );
+        // Übersetzen der Zusammenfassung
+if (patient.summary) {
+  this.apiService.translateText(patient.summary, this.selectedLanguage).subscribe(
+    (summaryResponse: any) => {
+      patient.summary = summaryResponse.translated_text;
+    },
+    (error) => {
+      console.error('Error translating summary:', error);
+    }
+  );
+}
+
+// Übersetzen der vorgeschlagenen Diagnose
+if (patient.diagnosis) {
+  this.apiService.translateText(patient.diagnosis, this.selectedLanguage).subscribe(
+    (diagnosisResponse: any) => {
+      patient.diagnosis = diagnosisResponse.translated_text;
+    },
+    (error) => {
+      console.error('Error translating diagnosis:', error);
+    }
+  );
+}
+
+// Übersetzen der vorgeschlagenen Medikation
+if (patient.medication) {
+  this.apiService.translateText(patient.medication, this.selectedLanguage).subscribe(
+    (medicationResponse: any) => {
+      patient.medication = medicationResponse.translated_text;
+    },
+    (error) => {
+      console.error('Error translating medication:', error);
+    }
+  );
+}
       },
       (error) => {
         console.error('Error translating text:', error);

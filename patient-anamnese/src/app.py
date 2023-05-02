@@ -17,7 +17,7 @@ def generate_questions(patient_text, patient_age, patient_gender):
     response = openai.Completion.create(
         engine="text-davinci-002",
         prompt=prompt,
-        max_tokens=50,
+        max_tokens=200,
         n=1,
         stop=None,
         temperature=0.5,
@@ -32,7 +32,7 @@ def generate_follow_up_questions(prev_question, patient_answer):
     response = openai.Completion.create(
         engine="text-davinci-002",
         prompt=prompt,
-        max_tokens=50,
+        max_tokens=200,
         n=1,
         stop=None,
         temperature=0.5,
@@ -96,6 +96,7 @@ def submit_to_doctor():
     # Verwenden Sie 'name' und 'age' anstelle von 'patient_name' und 'patient_age'
     patient_name = data.get("name", "Unknown")
     patient_age = data.get("age", "Unknown")
+    patient_gender = data.get("gender", "Unknown")
 
     patient_text = data["patient_text"]
     questions = data["questions"]
@@ -105,12 +106,13 @@ def submit_to_doctor():
     submitted_data.append({
         "patient_name": patient_name,
         "patient_age": patient_age,
+        "patient_gender" : patient_gender,
         "patient_text": patient_text,
         "questions": questions,
         "answers": answers
     })
 
-    return jsonify({"message": "Data submitted successfully", "patient_name": patient_name, "patient_age": patient_age, "patient_text": patient_text, "questions": questions, "answers": answers})
+    return jsonify({"message": "Data submitted successfully", "patient_name": patient_name, "patient_age": patient_age,"patient_gender" : patient_gender, "patient_text": patient_text, "questions": questions, "answers": answers})
 
 @app.route("/get_patients_data", methods=["GET"])
 def get_patients_data():
@@ -139,7 +141,7 @@ def generate_gpt3_response(prompt: str) -> str:
     response = openai.Completion.create(
         engine="text-davinci-002",
         prompt=prompt,
-        max_tokens=50,
+        max_tokens=200,
         n=1,
         stop=None,
         temperature=0.5,

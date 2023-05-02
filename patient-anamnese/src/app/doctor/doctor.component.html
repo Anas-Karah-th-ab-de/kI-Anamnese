@@ -10,7 +10,7 @@
       <h2>Patientenliste</h2>
     </div>
   </div>
-  <div *ngFor="let patient of patientsData" class="card mt-4">
+  <div *ngFor="let patient of patientsData" class="card mt-5">
     <div class="card-body">
       <div class="d-flex justify-content-between">
         <h5 class="card-title">{{ patient.patient_name }}</h5>
@@ -43,17 +43,20 @@
         <table>
           <thead>
             <tr>
-              <th>Fragen</th>
-              <th>Antworten</th>
+              <th>Frage</th>
+              <th>Antwort</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let question of patient.questions; let i = index">
-              <td>{{ question }}</td>
-              <td>{{ patient.answers[i] }}</td>
+            <tr *ngFor="let question of selectedPatient.questions; let i = index">
+              <ng-container *ngIf="selectedPatient.answers[i] !== ''">
+                <td> {{ question }}</td>
+                <td> {{ selectedPatient.answers[i] }}</td>
+              </ng-container>
             </tr>
           </tbody>
         </table>
+        
         <h3>Aktionen</h3>
         <button (click)="translate(patient)" class="btn btn-primary">Übersetzung</button>
         <button (click)="summarize(patient)" class="btn btn-secondary">Zusammenfassung</button>

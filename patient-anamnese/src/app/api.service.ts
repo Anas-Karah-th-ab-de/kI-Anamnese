@@ -18,7 +18,7 @@ export class ApiService {
     const body = { patient_text: patientText, patient_age: patientAge, language: language, patient_gender: patientGender };
     return this.http.post<any>(url, body).pipe(
       map(response => {
-        response.questions = response.questions.slice(0, 3);
+        response.questions = response.questions.slice(0, 9);
         response.questions.push("Möchten Sie dem Arzt weitere Mitteilungen geben?");
         response.questions.push("Bitte drüken sie send to Doctor um die Daten zu senden ");
         return response;
