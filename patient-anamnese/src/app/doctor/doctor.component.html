@@ -1,10 +1,6 @@
 <div class="container">
   <h1>Doctor's Dashboard</h1>
-  <div class="language-selection">
-    <select [(ngModel)]="selectedLanguage">
-      <option *ngFor="let lang of languages" [ngValue]="lang.code">{{ lang.name }}</option>
-    </select>
-  </div>
+  
   <div class="row">
     <div class="col-md-12">
       <h2>Patientenliste</h2>
@@ -58,6 +54,11 @@
         </table>
         
         <h3>Aktionen</h3>
+        <div class="language-selection">
+          <select [(ngModel)]="selectedLanguage">
+            <option *ngFor="let lang of languages" [ngValue]="lang.code">{{ lang.name }}</option>
+          </select>
+        </div>
         <button (click)="translate(patient)" class="btn btn-primary">Übersetzung</button>
         <button (click)="summarize(patient)" class="btn btn-secondary">Zusammenfassung</button>
         <button (click)="suggestDiagnosis(patient)" class="btn btn-primary">Vorgeschlagene Diagnose</button>

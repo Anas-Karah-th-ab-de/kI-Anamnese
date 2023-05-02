@@ -19,7 +19,7 @@ export class PatientFormComponent {
   currentQuestionIndex = 0;
   answers: string[] = [];
   selectedLanguage = 'en';
-  maxQuestions = 8;
+  maxQuestions = 10;
   patientGender = 'male';
   constructor(private apiService: ApiService) {}
   sendToDoctorVisible(): boolean {
