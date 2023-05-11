@@ -43,15 +43,18 @@ export class ApiService {
     const body = { prev_question: prevQuestion, patient_answer: patientAnswer };
     return this.http.post<any>(url, body);
   }
-  // Hinzufügen der translateText-Methode
-  translateText(text: string, targetLanguage: string): Observable<any> {
-    const body = {
-      text: text,
-      target_language: targetLanguage,
-    };
-
-    return this.http.post<any>(`${this.apiUrl}/translate_text`, body);
+  
+// Hinzufügen der translateText-Methode
+translateText(text: string, targetLanguage: string, delimiter: string | null = null): Observable<any> {
+  let requestBody: { text: string; target_language: string; delimiter?: string } = { text: text, target_language: targetLanguage };
+  if (delimiter) {
+    requestBody['delimiter'] = delimiter;
   }
+  return this.http.post(`${this.apiUrl}/translate_text`, requestBody);
+}
+
+  
+  
   // Zusammenfassungsfunktion
 summarizeText(text: string): Observable<any> {
   const body = { text: text };

@@ -10,6 +10,15 @@ CORS(app, resources={r"/*": {"origins": "*"}})  # Erlaubt CORS für alle Routen 
 openai.api_key = "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"
 global submitted_data
 submitted_data = []
+def detect_language_openai(text):
+    prompt = f"Detect the language of the following text: \"{text}\""
+    detected_language = generate_gpt3_response(prompt)
+    return detected_language
+
+def translate_text_openai(text, target_language):
+    prompt = f"Translate the following text to {target_language}: \"{text}\""
+    translated_text = generate_gpt3_response(prompt)
+    return translated_text
 
 def generate_questions(patient_text, patient_age, patient_gender):
     prompt = f"Based on the patient's complaint: \"{patient_text}\", age {patient_age}, and biological gender {patient_gender}, generate specific follow-up questions:"
@@ -47,23 +56,33 @@ def generate_questions_route():
     print("Request Content-Type:", content_type)
     try:
         data = request.get_json()
+        print("Received data:", data)
         patient_text = data["patient_text"]
         patient_age = data["patient_age"]
-
         patient_gender = data["patient_gender"]
         questions = generate_questions(patient_text, patient_age, patient_gender)
-    # ...
-        # Erkennen der Sprache von Patientenbeschwerden
-        translator = Translator()
-        detected_language = translator.detect(patient_text).lang
+        print("Generated questions:", questions)
 
-        # Übersetzen der Fragen in die erkannte Sprache
-        translated_questions = [translator.translate(question, dest=detected_language).text for question in questions]
+        # Detect language of the patient's complaint
+        detected_language = detect_language_openai(patient_text)
+        print("Detected language:", detected_language)
 
+        # Translate the questions into the detected language
+        translated_questions = []
+        for question in questions:
+            try:
+                translated_question = translate_text_openai(question, detected_language)
+                translated_questions.append(translated_question)
+            except Exception as e:
+                print(f"Error while translating question '{question}':", e)
+                translated_questions.append(question)
+
+        print("Translated questions:", translated_questions)
         return jsonify({"questions": translated_questions})
     except Exception as e:
         print("Error while processing request:", e)
         return jsonify({"error": str(e)}), 400
+
 
 @app.route("/generate_follow_up_questions", methods=["POST"])
 def generate_follow_up_questions_route():
@@ -76,24 +95,25 @@ def generate_follow_up_questions_route():
 
         follow_up_question = generate_follow_up_questions(prev_question, patient_answer)
 
-        # Erkennen der Sprache der Patientenantwort
-        translator = Translator()
-        detected_language = translator.detect(patient_answer).lang
+        # Detect language of the patient's answer
+        detected_language = detect_language_openai(patient_answer)
 
-        # Übersetzen der Frage in die erkannte Sprache
-        translated_question = translator.translate(follow_up_question, dest=detected_language).text
+        # Translate the question into the detected language
+        try:
+            translated_question = translate_text_openai(follow_up_question, detected_language)
+        except Exception as e:
+            print(f"Error while translating follow-up question '{follow_up_question}':", e)
+            translated_question = follow_up_question
 
         return jsonify({"follow_up_question": translated_question})
     except Exception as e:
         print("Error while processing request:", e)
         return jsonify({"error": str(e)}), 400
 
-
 @app.route("/submit_to_doctor", methods=["POST"])
 def submit_to_doctor():
     data = request.get_json()
 
-    # Verwenden Sie 'name' und 'age' anstelle von 'patient_name' und 'patient_age'
     patient_name = data.get("name", "Unknown")
     patient_age = data.get("age", "Unknown")
     patient_gender = data.get("gender", "Unknown")
@@ -101,6 +121,14 @@ def submit_to_doctor():
     patient_text = data["patient_text"]
     questions = data["questions"]
     answers = data["answers"]
+
+    # Filter non-empty questions and answers
+    answered_questions = []
+    answered_answers = []
+    for question, answer in zip(questions, answers):
+        if answer.strip():
+            answered_questions.append(question)
+            answered_answers.append(answer)
 
     # Fügen Sie patient_name und patient_age zu den eingereichten Daten hinzu
     submitted_data.append({
@@ -129,14 +157,24 @@ def translate_text_route():
         data = request.get_json()
         text = data["text"]
         target_language = data["target_language"]
+        delimiter = data.get("delimiter", None)
 
-        translator = Translator()
-        translated_text = translator.translate(text, dest=target_language).text
+        translated_text_lines = []
+        for line in text.split(delimiter):
+            try:
+                translated_line = translate_text_openai(line, target_language)
+                translated_text_lines.append(translated_line)
+            except Exception as e:
+                print(f"Error while translating line '{line}':", e)
+                translated_text_lines.append(line)
+
+        translated_text = (delimiter or "\n").join(translated_text_lines)
 
         return jsonify({"translated_text": translated_text})
     except Exception as e:
         print("Error while processing request:", e)
         return jsonify({"error": str(e)}), 400
+
 def generate_gpt3_response(prompt: str) -> str:
     response = openai.Completion.create(
         engine="text-davinci-002",

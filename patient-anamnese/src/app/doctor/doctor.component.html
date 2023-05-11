@@ -44,12 +44,13 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let question of selectedPatient.questions; let i = index">
-              <ng-container *ngIf="selectedPatient.answers[i] !== ''">
+            <ng-container *ngFor="let question of selectedPatient.questions; let i = index">
+              <tr *ngIf="selectedPatient.answers[i] !== ''">
                 <td> {{ question }}</td>
                 <td> {{ selectedPatient.answers[i] }}</td>
-              </ng-container>
-            </tr>
+              </tr>
+            </ng-container>
+            
           </tbody>
         </table>
         
