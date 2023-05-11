@@ -52,26 +52,28 @@ export class DoctorComponent implements OnInit {
         patient.patient_text = response.translated_text;
   
         // Übersetzen der Fragen
-        const questionsToTranslate = patient.questions.join('|||');
-        this.apiService.translateText(questionsToTranslate, this.selectedLanguage).subscribe(
-          (questionsResponse: any) => {
-            patient.questions = questionsResponse.translated_text.split('|||');
-          },
-          (error) => {
-            console.error('Error translating questions:', error);
-          }
-        );
-  
-        // Übersetzen der Antworten
-        const answersToTranslate = patient.answers.join('|||');
-        this.apiService.translateText(answersToTranslate, this.selectedLanguage).subscribe(
-          (answersResponse: any) => {
-            patient.answers = answersResponse.translated_text.split('|||');
-          },
-          (error) => {
-            console.error('Error translating answers:', error);
-          }
-        );
+  	    const questionsToTranslate = patient.questions.join('|||');
+  	    this.apiService.translateText(questionsToTranslate, this.selectedLanguage, '|||').subscribe(
+  	      (questionsResponse: any) => {
+  	        patient.questions = questionsResponse.translated_text.split('|||');
+  	      },
+  	      (error) => {
+  	        console.error('Error translating questions:', error);
+  	      }
+  	    );
+        
+  	    // Übersetzen der Antworten
+  	    const answersToTranslate = patient.answers.join('|||');
+  	    this.apiService.translateText(answersToTranslate, this.selectedLanguage, '|||').subscribe(
+  	      (answersResponse: any) => {
+  	        patient.answers = answersResponse.translated_text.split('|||');
+  	      },
+  	      (error) => {
+  	        console.error('Error translating answers:', error);
+  	      }
+  	    );
+
+
   
         // Übersetzen des Aktionstextes
         const actionTextToTranslate = this.selectedActionText;
