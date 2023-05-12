@@ -4,13 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
-import { PatientFormComponent } from './patient-form/patient-form.component';
+
 import { DoctorComponent } from './doctor/doctor.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    PatientFormComponent,
+    
     DoctorComponent,
   ],
   imports: [

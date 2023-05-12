@@ -8,9 +8,10 @@
   },
   "files": [
     "src/main.ts",
-    "src/app/app.module.ts",
-    "src/app/patient-form/patient-form.component.ts",
-    "src/app/doctor/doctor.component.ts",
+    "src/app patient/app.module.ts",
+    "src/app patient/patient-form/patient-form.component.ts",
+    "src/app doctor/app.module.ts",
+    "src/app doctor/doctor/doctor.component.ts",
 
     // Add other files here
   ],
